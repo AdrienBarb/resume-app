@@ -2,14 +2,6 @@
 
 import React, { useState } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/Dialog';
-import {
   Carousel,
   CarouselContent,
   CarouselItem,
@@ -21,15 +13,10 @@ import { Button } from '@/components/ui/Button';
 import useApi from '@/hooks/requests/useApi';
 import { cn } from '@/utils/tailwind/cn';
 import { useTranslations } from 'next-intl';
+import LanguageSwitcher from '@/components/layout/LanguageSwitcher';
+import LoginWrapper from '@/components/auth/LoginWrapper';
 
-const PaymentModal = ({
-  open,
-  setOpen,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-}) => {
-  console.log('🚀 ~ PaymentModal ~ open:', open);
+const PaymentPage = () => {
   const { usePost } = useApi();
   const [selectedPackageId, setSelectedPackageId] = useState<number | null>(
     null,
@@ -39,7 +26,6 @@ const PaymentModal = ({
   const { mutate: buyCredit, isPending } = usePost('/api/payment', {
     onSuccess: (data: { forwardUrl: string }) => {
       window.location.href = data.forwardUrl;
-      setOpen(false);
     },
   });
 
@@ -53,19 +39,26 @@ const PaymentModal = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="z-[1000] max-w-screen-sm">
-        <DialogHeader className="flex flex-col items-center">
-          <DialogTitle>{t('paymentModalBuyCredits')}</DialogTitle>
-          <DialogDescription>
-            {t('paymentModalSelectPackage')}
-          </DialogDescription>
-        </DialogHeader>
+    <div className="w-full">
+      <header className="fixed right-0 left-0 top-0 z-10 p-4 flex justify-between align-center bg-secondary-dark border-b border-custom-black/20 h-[68px]">
+        <span></span>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+        </div>
+      </header>
+      <main className="mt-[68px] container mx-auto p-6">
+        <div className="flex flex-col items-center mb-8">
+          <h1 className="text-2xl font-bold mb-2">
+            {t('paymentModalBuyCredits')}
+          </h1>
+          <p className="text-gray-600">{t('paymentModalSelectPackage')}</p>
+        </div>
+
         <Carousel
           opts={{
             align: 'start',
           }}
-          className="w-full max-w-44 md:max-w-md mx-auto"
+          className="w-full max-w-44 md:max-w-md mx-auto mb-8"
         >
           <CarouselContent>
             {creditPackages.map((pkg) => (
@@ -85,7 +78,7 @@ const PaymentModal = ({
                     {t('paymentModalPrice')}: {pkg.price / 100} €
                   </p>
                   <p>
-                    {t('paymentModalCoins')}: {pkg.coinsAmount / 100}
+                    {t('paymentModalCoins')}: {pkg.credits}
                   </p>
                 </div>
               </CarouselItem>
@@ -94,19 +87,20 @@ const PaymentModal = ({
           <CarouselPrevious />
           <CarouselNext />
         </Carousel>
-        <DialogFooter>
+
+        <div className="flex justify-center">
           <Button
-            className="w-full"
+            className="w-full max-w-md"
             disabled={isPending || selectedPackageId === null}
             isLoading={isPending}
             onClick={handleBuy}
           >
             {t('buy')}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </main>
+    </div>
   );
 };
 
-export default PaymentModal;
+export default PaymentPage;
