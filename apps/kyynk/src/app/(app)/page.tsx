@@ -70,14 +70,6 @@ const HomePage = async () => {
                 <Zap className="w-5 h-5 mr-2" />
                 Start Building for Free
               </Button>
-              <Button
-                variant="secondary"
-                size="lg"
-                className="border-white/30 bg-transparent text-white hover:bg-white/10 text-lg px-8 py-4"
-              >
-                <FileText className="w-5 h-5 mr-2" />
-                See Examples
-              </Button>
             </div>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-primary-light">
               <div className="flex items-center gap-2">
@@ -323,7 +315,8 @@ const HomePage = async () => {
               What Our Users Say
             </Title>
             <p className="text-xl text-gray-600">
-              Join thousands of professionals who've landed their dream jobs
+              Join thousands of professionals who&apos;ve landed their dream
+              jobs
             </p>
           </div>
 
@@ -339,8 +332,8 @@ const HomePage = async () => {
                   ))}
                 </div>
                 <p className="text-gray-600 mb-4">
-                  "I got 3 interview calls within a week of using this AI resume
-                  builder. The ATS optimization really works!"
+                  &quot;I got 3 interview calls within a week of using this AI
+                  resume builder. The ATS optimization really works!&quot;
                 </p>
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-primary-dark rounded-full flex items-center justify-center mr-3">
@@ -367,8 +360,8 @@ const HomePage = async () => {
                   ))}
                 </div>
                 <p className="text-gray-600 mb-4">
-                  "The AI perfectly captured my technical skills and presented
-                  them in a way that impressed recruiters."
+                  &quot;The AI perfectly captured my technical skills and
+                  presented them in a way that impressed recruiters.&quot;
                 </p>
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center mr-3">
@@ -395,8 +388,8 @@ const HomePage = async () => {
                   ))}
                 </div>
                 <p className="text-gray-600 mb-4">
-                  "As a recent graduate, I had no idea how to write a resume.
-                  This tool made it so easy and professional."
+                  &quot;As a recent graduate, I had no idea how to write a
+                  resume. This tool made it so easy and professional.&quot;
                 </p>
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-secondary-dark rounded-full flex items-center justify-center mr-3">
@@ -435,13 +428,6 @@ const HomePage = async () => {
               <Zap className="w-5 h-5 mr-2" />
               Create My Resume Now
             </Button>
-            <Button
-              variant="link"
-              size="lg"
-              className="text-white hover:text-primary-light text-lg"
-            >
-              Learn More <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
           </div>
         </div>
       </section>
@@ -463,12 +449,18 @@ const HomePage = async () => {
               <h4 className="text-lg font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-gray-400">
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a
+                    href="/about"
+                    className="hover:text-white transition-colors"
+                  >
                     About Us
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a
+                    href="/contact"
+                    className="hover:text-white transition-colors"
+                  >
                     Contact
                   </a>
                 </li>
