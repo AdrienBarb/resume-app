@@ -58,9 +58,9 @@ const HomePage = async () => {
               Create Your Perfect Resume with AI
             </Title>
             <p className="text-xl md:text-2xl text-primary-light mb-8 max-w-3xl mx-auto leading-relaxed">
-              Generate professional, ATS-optimized resumes in minutes. Our AI
-              analyzes job descriptions and crafts personalized resumes that get
-              you noticed.
+              Generate professional, ATS-optimized resumes in minutes. Buy
+              credits and use our AI to analyze job descriptions and craft
+              personalized resumes that get you noticed.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button
@@ -68,10 +68,14 @@ const HomePage = async () => {
                 className="bg-white text-primary-dark hover:bg-gray-100 text-lg px-8 py-4 font-semibold"
               >
                 <Zap className="w-5 h-5 mr-2" />
-                Start Building for Free
+                Buy Credits & Start Building
               </Button>
             </div>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-primary-light">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                <span>Pay per use</span>
+              </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
                 <span>ATS-optimized</span>
@@ -128,7 +132,8 @@ const HomePage = async () => {
               Why Choose Our AI Resume Builder?
             </Title>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Leverage cutting-edge AI technology to create resumes that stand
+              Leverage cutting-edge AI technology with our flexible credit
+              system. Buy credits once and use them to create resumes that stand
               out from the competition and pass through ATS systems.
             </p>
           </div>
@@ -413,8 +418,8 @@ const HomePage = async () => {
           </Title>
           <p className="text-xl text-primary-light mb-8 max-w-2xl mx-auto">
             Join over 500,000 professionals who&apos;ve created winning resumes
-            with our AI-powered builder. Start building your perfect resume
-            today.
+            with our AI-powered builder. Buy credits and start building your
+            perfect resume today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
@@ -422,7 +427,7 @@ const HomePage = async () => {
               className="bg-white text-primary-dark hover:bg-gray-100 text-lg px-8 py-4 font-semibold"
             >
               <Zap className="w-5 h-5 mr-2" />
-              Create My Resume Now
+              Buy Credits & Create Resume
             </Button>
           </div>
         </div>
@@ -461,12 +466,18 @@ const HomePage = async () => {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a
+                    href="/privacy-policy"
+                    className="hover:text-white transition-colors"
+                  >
                     Privacy Policy
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a
+                    href="/terms-of-service"
+                    className="hover:text-white transition-colors"
+                  >
                     Terms of Service
                   </a>
                 </li>

@@ -438,15 +438,16 @@ const ContactPage = async () => {
             Ready to Build Your Perfect Resume?
           </Title>
           <p className="text-xl text-primary-light mb-8 max-w-2xl mx-auto">
-            Don&apos;t wait to start your job search. Create a professional,
-            ATS-optimized resume in minutes with our AI-powered builder.
+            Don&apos;t wait to start your job search. Buy credits and create a
+            professional, ATS-optimized resume in minutes with our AI-powered
+            builder.
           </p>
           <Button
             size="lg"
             className="bg-white text-primary-dark hover:bg-gray-100 text-lg px-8 py-4 font-semibold"
           >
             <Zap className="w-5 h-5 mr-2" />
-            Start Building Now
+            Buy Credits & Start Building
           </Button>
         </div>
       </section>

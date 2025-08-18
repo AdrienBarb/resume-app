@@ -121,7 +121,10 @@ const PrivacyPolicyPage = async () => {
                   <li>Professional information (work experience, education)</li>
                   <li>Resume content and career objectives</li>
                   <li>Account credentials and preferences</li>
-                  <li>Payment information (processed securely by third parties)</li>
+                  <li>
+                    Payment information for credit purchases (processed securely
+                    by third parties)
+                  </li>
                 </ul>
               </CardContent>
             </Card>
@@ -141,7 +144,9 @@ const PrivacyPolicyPage = async () => {
                   our service:
                 </CardDescription>
                 <ul className="list-disc list-inside space-y-2 text-gray-600">
-                  <li>Device information (IP address, browser type, device ID)</li>
+                  <li>
+                    Device information (IP address, browser type, device ID)
+                  </li>
                   <li>Usage patterns and feature interactions</li>
                   <li>
                     Log data (access times, pages viewed, clicks, searches)
@@ -195,7 +200,7 @@ const PrivacyPolicyPage = async () => {
                 <ul className="list-disc list-inside space-y-2 text-gray-600">
                   <li>Generate and optimize your resumes</li>
                   <li>Provide customer support</li>
-                  <li>Process payments and subscriptions</li>
+                  <li>Process credit purchases and transactions</li>
                   <li>Maintain and improve our service</li>
                 </ul>
               </CardContent>
@@ -278,9 +283,7 @@ const PrivacyPolicyPage = async () => {
                   information:
                 </CardDescription>
                 <ul className="list-disc list-inside space-y-2 text-gray-600">
-                  <li>
-                    SSL/TLS encryption for data transmission
-                  </li>
+                  <li>SSL/TLS encryption for data transmission</li>
                   <li>Encrypted storage of sensitive information</li>
                   <li>Regular security audits and assessments</li>
                   <li>Access controls and authentication systems</li>
@@ -302,7 +305,8 @@ const PrivacyPolicyPage = async () => {
               <CardContent>
                 <CardDescription className="text-gray-600 mb-4">
                   We do not sell, trade, or rent your personal information. We
-                  may share your information only in these limited circumstances:
+                  may share your information only in these limited
+                  circumstances:
                 </CardDescription>
                 <ul className="list-disc list-inside space-y-2 text-gray-600">
                   <li>With your explicit consent</li>

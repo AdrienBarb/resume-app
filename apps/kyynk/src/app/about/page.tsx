@@ -357,15 +357,15 @@ const AboutPage = async () => {
           </Title>
           <p className="text-xl text-primary-light mb-8 max-w-2xl mx-auto">
             Experience the difference that AI-powered resume optimization can
-            make in your job search. Join hundreds of thousands of professionals
-            who trust us with their career success.
+            make in your job search. Buy credits and join hundreds of thousands
+            of professionals who trust us with their career success.
           </p>
           <Button
             size="lg"
             className="bg-white text-primary-dark hover:bg-gray-100 text-lg px-8 py-4 font-semibold"
           >
             <Zap className="w-5 h-5 mr-2" />
-            Start Building Your Resume
+            Buy Credits & Start Building
           </Button>
         </div>
       </section>
