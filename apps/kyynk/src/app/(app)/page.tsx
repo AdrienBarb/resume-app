@@ -74,10 +74,6 @@ const HomePage = async () => {
             <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-primary-light">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
-                <span>No signup required</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
                 <span>ATS-optimized</span>
               </div>
               <div className="flex items-center gap-2">
