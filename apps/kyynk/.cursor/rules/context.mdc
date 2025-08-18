@@ -1,0 +1,48 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# Kyynk AI Girlfriend - Cursor Rules
+
+## Project Context
+
+**Kyynk AI Girlfriend** is an adult-friendly conversational platform where users interact with lifelike AI companions. Each AI girlfriend has a unique personality and memory system, offering sensual, emotional, and personalized companionship experiences.
+
+### Key Features:
+
+- Users **chat in real-time** with AI girlfriends, receiving **personalized messages, images, and videos**.
+- The platform operates on a **subscription-based model**: users pay monthly to receive a set number of credits.
+- Credits are used to unlock premium interactions: explicit chats, custom images, audio replies, and generated video clips.
+- Conversations are **end-to-end encrypted** for privacy.
+- AI girlfriends evolve over time with **memory and personality tuning**.
+- The experience focuses on **consensual digital intimacy** and hyper-personalization.
+
+## Technology Stack
+
+- **Frontend:** Next.js 14 (App Router), React.js, Tailwind CSS
+- **Backend:** Node.js, Prisma ORM, Supabase
+- **Authentication:** NextAuth.js (Credentials provider)
+- **Payments:** Stripe (subscription & credit purchases), internal credit system for interactions
+- **Media Generation:** api.video (for videos), S3 + Imgix (for image thumbnails)
+- **AI Components:** GPT-powered chat, image/video generation pipeline
+- **State Management:** Zustand (if needed)
+- **Monorepo:** Turborepo
+
+## General Rules
+
+- The project uses **Next.js App Router**, not the Pages Router.
+- All **API routes must live under `/api/`**.
+- **React Query** is the preferred method for data fetching.
+- **Prisma ORM** is mandatory for all DB interactions.
+- Age verification is required before accessing any premium interaction.
+- **No sensitive data should be stored in `localStorage`**.
+- Media (videos/images) should be uploaded through **api.video** and **stored/served via Imgix/S3**.
+- All generated content must be tied to the **user’s session and consent**.
+
+## Compliance & Security
+
+- The platform follows **GDPR compliance** and enforces privacy-by-design.
+- **Chats are encrypted**, and all sensitive operations (media, payment, identity) are secured.
+- No media or logs should be accessible without proper authentication.
