@@ -41,9 +41,9 @@ export async function generateMetadata({
 
 const HomePage = async () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-primary-light via-white to-secondary">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 text-white">
+      <section className="relative overflow-hidden bg-gradient-to-r from-primary-dark via-primary to-custom-black text-white">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
           <div className="text-center">
@@ -57,7 +57,7 @@ const HomePage = async () => {
             >
               Create Your Perfect Resume with AI
             </Title>
-            <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-primary-light mb-8 max-w-3xl mx-auto leading-relaxed">
               Generate professional, ATS-optimized resumes in minutes. Our AI
               analyzes job descriptions and crafts personalized resumes that get
               you noticed.
@@ -65,7 +65,7 @@ const HomePage = async () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button
                 size="lg"
-                className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4 font-semibold"
+                className="bg-white text-primary-dark hover:bg-gray-100 text-lg px-8 py-4 font-semibold"
               >
                 <Zap className="w-5 h-5 mr-2" />
                 Start Building for Free
@@ -79,7 +79,7 @@ const HomePage = async () => {
                 See Examples
               </Button>
             </div>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-blue-100">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-primary-light">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
                 <span>No signup required</span>
@@ -102,25 +102,25 @@ const HomePage = async () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">
+              <div className="text-3xl md:text-4xl font-bold text-primary-dark mb-2">
                 500k+
               </div>
               <div className="text-gray-600">Resumes Created</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">
+              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">
                 85%
               </div>
               <div className="text-gray-600">Interview Rate</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-indigo-600 mb-2">
+              <div className="text-3xl md:text-4xl font-bold text-custom-black mb-2">
                 3 min
               </div>
               <div className="text-gray-600">Average Time</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-blue-500 mb-2">
+              <div className="text-3xl md:text-4xl font-bold text-primary-dark mb-2">
                 98%
               </div>
               <div className="text-gray-600">ATS Pass Rate</div>
@@ -148,8 +148,8 @@ const HomePage = async () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                  <Sparkles className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 bg-primary-light rounded-lg flex items-center justify-center mb-4">
+                  <Sparkles className="w-6 h-6 text-primary-dark" />
                 </div>
                 <CardTitle className="text-xl font-semibold">
                   AI-Powered Content
@@ -166,8 +166,8 @@ const HomePage = async () => {
 
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                  <Target className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center mb-4">
+                  <Target className="w-6 h-6 text-custom-black" />
                 </div>
                 <CardTitle className="text-xl font-semibold">
                   ATS Optimization
@@ -184,8 +184,8 @@ const HomePage = async () => {
 
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                  <Clock className="w-6 h-6 text-green-600" />
+                <div className="w-12 h-12 bg-primary-light rounded-lg flex items-center justify-center mb-4">
+                  <Clock className="w-6 h-6 text-primary-dark" />
                 </div>
                 <CardTitle className="text-xl font-semibold">
                   Lightning Fast
@@ -202,8 +202,8 @@ const HomePage = async () => {
 
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-                  <FileText className="w-6 h-6 text-indigo-600" />
+                <div className="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center mb-4">
+                  <FileText className="w-6 h-6 text-custom-black" />
                 </div>
                 <CardTitle className="text-xl font-semibold">
                   Multiple Formats
@@ -219,8 +219,8 @@ const HomePage = async () => {
 
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
-                  <TrendingUp className="w-6 h-6 text-yellow-600" />
+                <div className="w-12 h-12 bg-primary-light rounded-lg flex items-center justify-center mb-4">
+                  <TrendingUp className="w-6 h-6 text-primary-dark" />
                 </div>
                 <CardTitle className="text-xl font-semibold">
                   Industry-Specific
@@ -236,8 +236,8 @@ const HomePage = async () => {
 
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                  <Users className="w-6 h-6 text-red-600" />
+                <div className="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center mb-4">
+                  <Users className="w-6 h-6 text-custom-black" />
                 </div>
                 <CardTitle className="text-xl font-semibold">
                   Expert-Approved
@@ -271,7 +271,7 @@ const HomePage = async () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 bg-primary-dark rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold text-white">1</span>
               </div>
               <Title Tag="h3" className="text-xl font-semibold mb-4">
@@ -284,7 +284,7 @@ const HomePage = async () => {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold text-white">2</span>
               </div>
               <Title Tag="h3" className="text-xl font-semibold mb-4">
@@ -297,7 +297,7 @@ const HomePage = async () => {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 bg-custom-black rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold text-white">3</span>
               </div>
               <Title Tag="h3" className="text-xl font-semibold mb-4">
@@ -313,7 +313,7 @@ const HomePage = async () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-50 to-purple-50">
+      <section className="py-20 bg-gradient-to-r from-primary-light to-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <Title
@@ -343,7 +343,7 @@ const HomePage = async () => {
                   builder. The ATS optimization really works!"
                 </p>
                 <div className="flex items-center">
-                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                  <div className="w-10 h-10 bg-primary-dark rounded-full flex items-center justify-center mr-3">
                     <span className="text-white font-semibold">SA</span>
                   </div>
                   <div>
@@ -371,7 +371,7 @@ const HomePage = async () => {
                   them in a way that impressed recruiters."
                 </p>
                 <div className="flex items-center">
-                  <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mr-3">
+                  <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center mr-3">
                     <span className="text-white font-semibold">MC</span>
                   </div>
                   <div>
@@ -399,7 +399,7 @@ const HomePage = async () => {
                   This tool made it so easy and professional."
                 </p>
                 <div className="flex items-center">
-                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                  <div className="w-10 h-10 bg-secondary-dark rounded-full flex items-center justify-center mr-3">
                     <span className="text-white font-semibold">EJ</span>
                   </div>
                   <div>
@@ -414,7 +414,7 @@ const HomePage = async () => {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 text-white">
+      <section className="py-20 bg-gradient-to-r from-primary-dark via-primary to-custom-black text-white">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <Title
             Tag="h2"
@@ -422,7 +422,7 @@ const HomePage = async () => {
           >
             Ready to Land Your Dream Job?
           </Title>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-primary-light mb-8 max-w-2xl mx-auto">
             Join over 500,000 professionals who&apos;ve created winning resumes
             with our AI-powered builder. Start building your perfect resume
             today.
@@ -430,7 +430,7 @@ const HomePage = async () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4 font-semibold"
+              className="bg-white text-primary-dark hover:bg-gray-100 text-lg px-8 py-4 font-semibold"
             >
               <Zap className="w-5 h-5 mr-2" />
               Create My Resume Now
@@ -438,7 +438,7 @@ const HomePage = async () => {
             <Button
               variant="link"
               size="lg"
-              className="text-white hover:text-blue-100 text-lg"
+              className="text-white hover:text-primary-light text-lg"
             >
               Learn More <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
