@@ -1,34 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model User {
-  id            String  @id
-  name          String?
-  email         String
-  emailVerified Boolean
-  utmTracking   Json?
+  id                String              @id
+  name              String?
+  email             String              @unique
+  emailVerified     Boolean
+  utmTracking       Json?
+  createdAt         DateTime
+  updatedAt         DateTime
+  creditBalance     Int                 @default(0)
+  conversations     Conversation[]
+  CreditTransaction CreditTransaction[]
+  accounts          Account[]
+  sessions          Session[]
 
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
-  conversations Conversation[]
-
-  @@unique([email])
   @@map("user")
 }
 
 model Session {
   id        String   @id
   expiresAt DateTime
-  token     String
+  token     String   @unique
   createdAt DateTime
   updatedAt DateTime
   ipAddress String?
@@ -36,7 +36,6 @@ model Session {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
   @@map("session")
 }
 
@@ -45,7 +44,6 @@ model Account {
   accountId             String
   providerId            String
   userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -55,6 +53,7 @@ model Account {
   password              String?
   createdAt             DateTime
   updatedAt             DateTime
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("account")
 }
@@ -71,48 +70,46 @@ model Verification {
 }
 
 model AIGirlfriend {
-  id                String   @id @default(cuid())
-  pseudo            String   @unique
-  slug              String   @unique
+  id                String         @id @default(cuid())
+  pseudo            String         @unique
+  slug              String         @unique
   profileImageId    String
-  isActive          Boolean  @default(true)
+  isActive          Boolean        @default(true)
   hook              String?
   chatOpeningLine   Json?
-  traits            String[] @default([])
+  traits            String[]       @default([])
   archetype         String?
   voice             String?
-  boundaries        String[] @default([])
-  styleReminders    String[] @default([])
-  petNames          String[] @default([])
-  emojiRatio        Float    @default(0.1)
-  sentenceLength    String?  @default("short")
-  aftercare         Boolean  @default(true)
-  consentChecks     String[] @default([])
-  genTemperature    Float    @default(0.9)
-  genTopP           Float    @default(0.9)
-  genMaxTokens      Int      @default(220)
+  boundaries        String[]       @default([])
+  styleReminders    String[]       @default([])
+  petNames          String[]       @default([])
+  emojiRatio        Float          @default(0.1)
+  sentenceLength    String?        @default("short")
+  aftercare         Boolean        @default(true)
+  consentChecks     String[]       @default([])
+  genTemperature    Float          @default(0.9)
+  genTopP           Float          @default(0.9)
+  genMaxTokens      Int            @default(220)
   visualStylePrompt String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  conversations Conversation[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  conversations     Conversation[]
 
   @@index([isActive, slug])
   @@map("ai_girlfriend")
 }
 
 model Conversation {
-  id             String   @id @default(cuid())
+  id             String       @id @default(cuid())
   userId         String
   aiGirlfriendId String
-  isActive       Boolean  @default(true)
-  lastMessageAt  DateTime @default(now())
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  aiGirlfriend AIGirlfriend @relation(fields: [aiGirlfriendId], references: [id], onDelete: Cascade)
-  messages     Message[]
+  isActive       Boolean      @default(true)
+  lastMessageAt  DateTime     @default(now())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  aiGirlfriend   AIGirlfriend @relation(fields: [aiGirlfriendId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages       Message[]
 
   @@unique([userId, aiGirlfriendId])
   @@index([userId])
@@ -128,14 +125,33 @@ model Message {
   isRead         Boolean       @default(false)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
-
-  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversation   Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
   @@index([conversationId])
   @@index([createdAt])
 }
 
+model CreditTransaction {
+  id                    String            @id @default(cuid())
+  userId                String
+  packageId             Int
+  amountCents           Int
+  currency              String
+  credits               Int
+  stripePaymentIntentId String
+  status                TransactionStatus @default(PROCESSING)
+  createdAt             DateTime          @default(now())
+  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 enum MessageSender {
   USER
   AI
+}
+
+enum TransactionStatus {
+  SUCCEEDED
+  PROCESSING
+  CANCELED
+  REFUNDED
 }

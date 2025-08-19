@@ -35,3 +35,7 @@ export const creditPackages = [
     bonus: 200,
   },
 ];
+
+export function getPackById(id: number) {
+  return creditPackages.find((p) => p.id === id) ?? null;
+}
