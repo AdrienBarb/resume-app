@@ -5,9 +5,7 @@ import { prisma } from '@/lib/db/client';
 import { TransactionStatus } from '@prisma/client';
 
 export async function POST(req: NextRequest) {
-  const userId = 'Yll9IdqwqYPmQfDWSRLe8gT4Psfj7rqx';
-
-  const { packageId } = await req.json();
+  const { packageId, userId } = await req.json();
   const pack = getPackById(Number(packageId));
   if (!pack) {
     return NextResponse.json({ error: 'Invalid package' }, { status: 400 });

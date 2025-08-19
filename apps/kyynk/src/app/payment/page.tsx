@@ -7,7 +7,12 @@ import {
   PaymentElement,
   Elements,
 } from '@stripe/react-stripe-js';
-import { useQueryStates, parseAsString, parseAsInteger } from 'nuqs';
+import {
+  useQueryStates,
+  parseAsString,
+  parseAsInteger,
+  useQueryState,
+} from 'nuqs';
 import { toast } from 'react-hot-toast';
 import { ArrowLeft } from 'lucide-react';
 
@@ -172,6 +177,10 @@ const PaymentPage = () => {
     clientSecret: parseAsString,
     selectedPackage: parseAsInteger,
   });
+  const [userId, setUserId] = useQueryState('userId');
+  const [redirectUrl, setRedirectUrl] = useQueryState('redirectUrl');
+
+  const prevUrl = redirectUrl || process.env.NEXT_PUBLIC_APP_URL;
 
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -193,7 +202,10 @@ const PaymentPage = () => {
       const res = await fetch('/api/payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ packageId: clientSecret.selectedPackage }),
+        body: JSON.stringify({
+          packageId: clientSecret.selectedPackage,
+          userId: userId,
+        }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -212,12 +224,20 @@ const PaymentPage = () => {
     }
   };
 
-  const handleBackToPackages = () => {
-    setClientSecret(null);
+  const handleBack = () => {
+    if (isOnPaymentForm) {
+      setClientSecret(null);
+    } else if (userId && prevUrl) {
+      window.location.href = prevUrl;
+    }
   };
 
   const handlePaymentSuccess = () => {
-    router.push('/');
+    if (userId) {
+      window.location.href = prevUrl!;
+    } else {
+      router.push('/');
+    }
   };
 
   const handlePaymentError = (errorMessage: string) => {
@@ -257,16 +277,14 @@ const PaymentPage = () => {
     <div className="w-full">
       <header className="fixed right-0 left-0 top-0 z-10 p-4 flex justify-between align-center bg-secondary-dark border-b border-custom-black/20 h-[68px]">
         <div className="flex items-center">
-          {isOnPaymentForm && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleBackToPackages}
-              className="mr-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleBack}
+            className="mr-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
         </div>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
