@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   useStripe,
   useElements,
   PaymentElement,
   Elements,
 } from '@stripe/react-stripe-js';
+import { useQueryStates, parseAsString, parseAsInteger } from 'nuqs';
+import { toast } from 'react-hot-toast';
+import { ArrowLeft } from 'lucide-react';
 
 import {
   Carousel,
@@ -21,59 +24,72 @@ import { cn } from '@/utils/tailwind/cn';
 import { useTranslations } from 'next-intl';
 import LanguageSwitcher from '@/components/layout/LanguageSwitcher';
 import { getStripePromise } from '@/lib/stripe/public';
+import { useRouter } from 'next/navigation';
 
-// --- Simple inline checkout form using PaymentElement ---
-function CheckoutForm({
-  amountLabel,
-  onDone,
-}: {
+interface ErrorScreenProps {
+  message: string;
+  onRetry: () => void;
+}
+
+function ErrorScreen({ message, onRetry }: ErrorScreenProps) {
+  return (
+    <div className="max-w-md mx-auto text-center space-y-4">
+      <div className="text-6xl">😞</div>
+      <h2 className="text-xl font-semibold">Oops! Something went wrong</h2>
+      <p className="text-gray-600">{message}</p>
+      <Button onClick={onRetry} className="w-full">
+        Try Again
+      </Button>
+    </div>
+  );
+}
+interface CheckoutFormProps {
   amountLabel: string;
-  onDone?: () => void;
-}) {
+  onSuccess?: () => void;
+  onError?: (error: string) => void;
+}
+
+function CheckoutForm({ amountLabel, onSuccess, onError }: CheckoutFormProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!stripe || !elements) return;
 
     setLoading(true);
-    setErrorMsg(null);
-    setSuccessMsg(null);
 
-    // (Stripe docs) validate Element + collect wallets before confirm
     const { error: submitError } = await elements.submit();
     if (submitError) {
       setLoading(false);
-      setErrorMsg(submitError.message ?? 'Payment form incomplete.');
+      const errorMessage = submitError.message ?? 'Payment form incomplete.';
+      toast.error(errorMessage);
+      onError?.(errorMessage);
       return;
     }
 
     const { error } = await stripe.confirmPayment({
       elements,
       redirect: 'if_required',
-      // If you prefer full redirect flow, pass confirmParams.return_url here
     });
 
     setLoading(false);
 
     if (error) {
-      setErrorMsg(error.message ?? 'Payment failed.');
+      const errorMessage = error.message ?? 'Payment failed.';
+      toast.error(errorMessage);
+      onError?.(errorMessage);
       return;
     }
 
-    setSuccessMsg('Payment succeeded! Your credits will be added shortly.');
-    onDone?.();
+    toast.success('Payment succeeded! Your credits will be added shortly.');
+    onSuccess?.();
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <PaymentElement options={{ layout: 'tabs' }} />
-      {errorMsg && <p className="text-sm text-red-600">{errorMsg}</p>}
-      {successMsg && <p className="text-sm text-green-700">{successMsg}</p>}
       <Button
         type="submit"
         disabled={!stripe || !elements || loading}
@@ -86,51 +102,172 @@ function CheckoutForm({
   );
 }
 
+interface PackageSelectionProps {
+  selectedPackageId: number | null;
+  onSelectPackage: (id: number) => void;
+  onBuy: () => void;
+  isCreating: boolean;
+  t: any;
+}
+
+function PackageSelection({
+  selectedPackageId,
+  onSelectPackage,
+  onBuy,
+  isCreating,
+  t,
+}: PackageSelectionProps) {
+  return (
+    <>
+      <Carousel
+        opts={{ align: 'start' }}
+        className="w-full max-w-44 md:max-w-md mx-auto mb-8"
+      >
+        <CarouselContent>
+          {creditPackages.map((pkg) => (
+            <CarouselItem
+              key={pkg.id}
+              className="basis-full md:basis-1/2 lg:basis-1/3"
+            >
+              <div
+                className={cn(
+                  'p-4 border rounded-lg flex flex-col items-center cursor-pointer',
+                  selectedPackageId === pkg.id && 'border-primary',
+                )}
+                onClick={() => onSelectPackage(pkg.id)}
+              >
+                <h3 className="text-lg font-bold">{pkg.name}</h3>
+                <p>
+                  {t('paymentModalPrice')}: {(pkg.price / 100).toFixed(2)} $
+                </p>
+                <p>
+                  {t('paymentModalCoins')}: {pkg.credits}
+                </p>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+
+      <div className="flex justify-center">
+        <Button
+          className="w-full max-w-md"
+          disabled={isCreating || selectedPackageId === null}
+          isLoading={isCreating}
+          onClick={onBuy}
+        >
+          Buy
+        </Button>
+      </div>
+    </>
+  );
+}
+
 const PaymentPage = () => {
   const t = useTranslations();
+  const router = useRouter();
+  const [clientSecret, setClientSecret] = useQueryStates({
+    clientSecret: parseAsString,
+    selectedPackage: parseAsInteger,
+  });
 
-  // 1) user picks a package
-  const [selectedPackageId, setSelectedPackageId] = useState<number | null>(
-    null,
-  );
-
-  // 2) after Buy, create PaymentIntent and store clientSecret
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
-  const [createError, setCreateError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const selectedPack = selectedPackageId
-    ? getPackById(selectedPackageId)
+  const selectedPack = clientSecret.selectedPackage
+    ? getPackById(clientSecret.selectedPackage)
     : null;
 
+  const handleSelectPackage = (packageId: number) => {
+    setClientSecret({ selectedPackage: packageId });
+  };
+
   const handleBuy = async () => {
-    if (!selectedPackageId) return;
+    if (!clientSecret.selectedPackage) return;
     setCreating(true);
-    setCreateError(null);
+    setError(null);
 
     try {
       const res = await fetch('/api/payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ packageId: selectedPackageId }),
+        body: JSON.stringify({ packageId: clientSecret.selectedPackage }),
       });
       const json = await res.json();
-      if (!res.ok)
+      if (!res.ok) {
         throw new Error(json?.error || 'Failed to create payment intent');
-      setClientSecret(json.clientSecret); // show PaymentElement now
+      }
+      setClientSecret({
+        selectedPackage: clientSecret.selectedPackage,
+        clientSecret: json.clientSecret,
+      });
     } catch (e: any) {
-      setCreateError(e.message);
+      const errorMessage = e.message;
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setCreating(false);
     }
   };
 
-  const resetCheckout = () => setClientSecret(null);
+  const handleBackToPackages = () => {
+    setClientSecret(null);
+  };
+
+  const handlePaymentSuccess = () => {
+    router.push('/');
+  };
+
+  const handlePaymentError = (errorMessage: string) => {
+    setError(errorMessage);
+  };
+
+  const handleRetryError = () => {
+    setError(null);
+  };
+
+  if (error) {
+    return (
+      <div className="w-full">
+        <header className="fixed right-0 left-0 top-0 z-10 p-4 flex justify-between align-center bg-secondary-dark border-b border-custom-black/20 h-[68px]">
+          <span></span>
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+          </div>
+        </header>
+        <main className="mt-[68px] container mx-auto p-6">
+          <ErrorScreen message={error} onRetry={handleRetryError} />
+        </main>
+      </div>
+    );
+  }
+
+  const isOnPaymentForm = !!clientSecret.clientSecret;
+  const headerTitle =
+    isOnPaymentForm && selectedPack
+      ? `You're going to pay $${(selectedPack.price / 100).toFixed(2)}`
+      : t('paymentModalBuyCredits');
+  const headerSubtitle = isOnPaymentForm
+    ? `${selectedPack?.credits} credits for ${selectedPack?.name} package`
+    : t('paymentModalSelectPackage');
 
   return (
     <div className="w-full">
       <header className="fixed right-0 left-0 top-0 z-10 p-4 flex justify-between align-center bg-secondary-dark border-b border-custom-black/20 h-[68px]">
-        <span></span>
+        <div className="flex items-center">
+          {isOnPaymentForm && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBackToPackages}
+              className="mr-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
         </div>
@@ -138,84 +275,33 @@ const PaymentPage = () => {
 
       <main className="mt-[68px] container mx-auto p-6">
         <div className="flex flex-col items-center mb-8">
-          <h1 className="text-2xl font-bold mb-2">
-            {t('paymentModalBuyCredits')}
-          </h1>
-          <p className="text-gray-600">{t('paymentModalSelectPackage')}</p>
+          <h1 className="text-2xl font-bold mb-2">{headerTitle}</h1>
+          <p className="text-gray-600">{headerSubtitle}</p>
         </div>
 
-        {/* If no clientSecret yet: show packs picker */}
-        {!clientSecret && (
-          <>
-            <Carousel
-              opts={{ align: 'start' }}
-              className="w-full max-w-44 md:max-w-md mx-auto mb-8"
-            >
-              <CarouselContent>
-                {creditPackages.map((pkg) => (
-                  <CarouselItem
-                    key={pkg.id}
-                    className="basis-full md:basis-1/2 lg:basis-1/3"
-                  >
-                    <div
-                      className={cn(
-                        'p-4 border rounded-lg flex flex-col items-center cursor-pointer',
-                        selectedPackageId === pkg.id && 'border-primary',
-                      )}
-                      onClick={() => setSelectedPackageId(pkg.id)}
-                    >
-                      <h3 className="text-lg font-bold">{pkg.name}</h3>
-                      <p>
-                        {t('paymentModalPrice')}: {(pkg.price / 100).toFixed(2)}{' '}
-                        $
-                      </p>
-                      <p>
-                        {t('paymentModalCoins')}: {pkg.credits}
-                        {pkg.bonus ? ` (+${pkg.bonus} bonus)` : ''}
-                      </p>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
-
-            {createError && (
-              <p className="text-sm text-red-600 text-center mb-2">
-                {createError}
-              </p>
-            )}
-
-            <div className="flex justify-center">
-              <Button
-                className="w-full max-w-md"
-                disabled={creating || selectedPackageId === null}
-                isLoading={creating}
-                onClick={handleBuy}
-              >
-                Buy
-              </Button>
-            </div>
-          </>
+        {!isOnPaymentForm && (
+          <PackageSelection
+            selectedPackageId={clientSecret.selectedPackage}
+            onSelectPackage={handleSelectPackage}
+            onBuy={handleBuy}
+            isCreating={creating}
+            t={t}
+          />
         )}
 
-        {/* If clientSecret present: render Stripe Elements */}
-        {clientSecret && selectedPack && (
+        {isOnPaymentForm && selectedPack && clientSecret.clientSecret && (
           <div className="max-w-md mx-auto mt-8 space-y-4">
             <Elements
               stripe={getStripePromise()}
               options={{
-                clientSecret,
+                clientSecret: clientSecret.clientSecret,
                 appearance: { labels: 'floating' },
-                // locale: 'auto', // or map from next-intl if you want
               }}
             >
               <CheckoutForm
                 amountLabel={`$${(selectedPack.price / 100).toFixed(2)} USD`}
-                onDone={() => {
-                  // Optionally refresh balance or navigate
-                }}
+                onSuccess={handlePaymentSuccess}
+                onError={handlePaymentError}
               />
             </Elements>
           </div>
