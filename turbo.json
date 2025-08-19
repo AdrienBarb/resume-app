@@ -12,7 +12,9 @@
     "DATABASE_URL",
     "DIRECT_URL",
     "HF_ENDPOINT",
-    "HF_TOKEN"
+    "HF_TOKEN",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET"
   ],
   "tasks": {
     "dev": {
@@ -34,7 +36,9 @@
         "DATABASE_URL",
         "DIRECT_URL",
         "HF_ENDPOINT",
-        "HF_TOKEN"
+        "HF_TOKEN",
+        "STRIPE_SECRET_KEY",
+        "STRIPE_WEBHOOK_SECRET"
       ]
     },
     "start": {
