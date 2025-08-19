@@ -14,7 +14,10 @@
     "cypress:run:staging": "CYPRESS_ENV=staging npx cypress run",
     "type-check": "tsc --noEmit",
     "prisma:generate": "prisma generate --schema=src/lib/db/schema.prisma",
-    "prisma:migrate:deploy": "prisma migrate deploy --schema=src/lib/db/schema.prisma"
+    "prisma:migrate:deploy": "prisma migrate deploy --schema=src/lib/db/schema.prisma",
+    "prisma:pull": "prisma db pull --schema=src/lib/db/schema.prisma",
+    "prisma:build": "prisma db pull --schema=src/lib/db/schema.prisma && prisma generate --schema=src/lib/db/schema.prisma",
+    "build:vercel": "prisma db pull --schema=src/lib/db/schema.prisma && prisma generate --schema=src/lib/db/schema.prisma && next build"
   },
   "prisma": {
     "schema": "src/lib/db/schema.prisma",
