@@ -16,13 +16,7 @@ import {
 import { toast } from 'react-hot-toast';
 import { ArrowLeft } from 'lucide-react';
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/Carousel';
+// Removed Carousel imports - using grid layout instead
 import { creditPackages, getPackById } from '@/constants/creditPackages';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/tailwind/cn';
@@ -124,46 +118,119 @@ function PackageSelection({
 }: PackageSelectionProps) {
   return (
     <>
-      <Carousel
-        opts={{ align: 'start' }}
-        className="w-full max-w-44 md:max-w-md mx-auto mb-8"
-      >
-        <CarouselContent>
-          {creditPackages.map((pkg) => (
-            <CarouselItem
-              key={pkg.id}
-              className="basis-full md:basis-1/2 lg:basis-1/3"
-            >
-              <div
-                className={cn(
-                  'p-4 border rounded-lg flex flex-col items-center cursor-pointer',
-                  selectedPackageId === pkg.id && 'border-primary',
-                )}
-                onClick={() => onSelectPackage(pkg.id)}
-              >
-                <h3 className="text-lg font-bold">{pkg.name}</h3>
-                <p>
-                  {t('paymentModalPrice')}: {(pkg.price / 100).toFixed(2)} $
-                </p>
-                <p>
-                  {t('paymentModalCoins')}: {pkg.credits}
-                </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 max-w-7xl mx-auto mb-8">
+        {creditPackages.map((pkg) => (
+          <div
+            key={pkg.id}
+            className={cn(
+              'relative p-6 border-2 rounded-xl flex flex-col items-center cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105',
+              selectedPackageId === pkg.id
+                ? 'border-primary bg-primary/5 shadow-lg'
+                : 'border-gray-200 hover:border-primary/50',
+              pkg.popular && 'border-orange-400 bg-orange-50',
+              pkg.bestValue && 'border-green-400 bg-green-50',
+            )}
+            onClick={() => onSelectPackage(pkg.id)}
+          >
+            {pkg.popular && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                  MOST POPULAR
+                </span>
               </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
+            )}
+            {pkg.bestValue && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                  BEST VALUE
+                </span>
+              </div>
+            )}
+
+            {/* Price */}
+            <div className="text-center mb-4">
+              <div className="text-3xl font-bold text-black">
+                ${(pkg.price / 100).toFixed(2)}
+              </div>
+              <div className="text-sm text-gray-500">
+                ${pkg.pricePerCredit.toFixed(2)} per credit
+              </div>
+            </div>
+
+            {/* Credits with bonus highlight */}
+            <div className="text-center mb-4">
+              <div className="text-2xl font-bold">{pkg.credits}</div>
+              <div className="text-sm text-gray-600">Total Credits</div>
+              {pkg.bonus > 0 && (
+                <div className="mt-1">
+                  <span className="text-sm text-gray-600">
+                    {pkg.baseCredits} +
+                  </span>
+                  <span className="text-sm font-bold text-green-600 ml-1">
+                    {pkg.bonus} bonus
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Savings Badge */}
+            {pkg.savings > 0 && (
+              <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-bold mb-2">
+                Save {pkg.savings}%
+              </div>
+            )}
+
+            {/* Value Proposition */}
+            <div className="text-center text-xs text-gray-500 mb-4">
+              {pkg.id === 1 && 'Perfect to get started'}
+              {pkg.id === 2 && 'Great for regular users'}
+              {pkg.id === 3 && 'Ideal for active members'}
+              {pkg.id === 4 && 'Maximum value for power users'}
+              {pkg.id === 5 && 'Ultimate experience package'}
+            </div>
+
+            {/* Selection indicator */}
+            {selectedPackageId === pkg.id && (
+              <div className="absolute top-4 right-4">
+                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-4 h-4 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Social proof and urgency */}
+      <div className="text-center mb-6">
+        <p className="text-sm text-gray-600">
+          ⭐ Join over 10,000+ satisfied users • 💳 Secure payment • 🚀 Instant
+          credit delivery
+        </p>
+      </div>
 
       <div className="flex justify-center">
         <Button
-          className="w-full max-w-md"
+          className="w-full max-w-md py-4 text-lg font-semibold"
           disabled={isCreating || selectedPackageId === null}
           isLoading={isCreating}
           onClick={onBuy}
         >
-          Buy
+          {selectedPackageId
+            ? `Get ${
+                creditPackages.find((p) => p.id === selectedPackageId)?.credits
+              } Credits`
+            : 'Select a Package'}
         </Button>
       </div>
     </>

@@ -2,37 +2,62 @@ export const creditPackages = [
   {
     id: 1,
     name: 'Starter',
-    price: 999,
-    credits: 10,
+    price: 999, // $9.99
+    credits: 100,
     bonus: 0,
+    baseCredits: 100,
+    savings: 0,
+    popular: false,
+    bestValue: false,
+    pricePerCredit: 9.99,
   },
   {
     id: 2,
-    name: 'Bronze',
-    price: 2499,
-    credits: 30,
-    bonus: 5,
+    name: 'Popular',
+    price: 1999, // $19.99
+    credits: 250,
+    bonus: 50,
+    baseCredits: 200,
+    savings: 25, // 25% bonus
+    popular: true,
+    bestValue: false,
+    pricePerCredit: 7.99,
   },
   {
     id: 3,
-    name: 'Silver',
-    price: 4999,
-    credits: 70,
-    bonus: 20,
+    name: 'Premium',
+    price: 3999, // $39.99
+    credits: 600,
+    bonus: 150,
+    baseCredits: 450,
+    savings: 33, // 33% bonus
+    popular: false,
+    bestValue: false,
+    pricePerCredit: 6.66,
   },
   {
     id: 4,
-    name: 'Gold',
-    price: 9999,
-    credits: 160,
-    bonus: 60,
+    name: 'VIP',
+    price: 7999, // $79.99
+    credits: 1400,
+    bonus: 400,
+    baseCredits: 1000,
+    savings: 40, // 40% bonus
+    popular: false,
+    bestValue: true,
+    pricePerCredit: 5.71,
   },
   {
     id: 5,
-    name: 'Platinum',
-    price: 19999,
-    credits: 400,
-    bonus: 200,
+    name: 'Ultimate',
+    price: 14999, // $149.99
+    credits: 3200,
+    bonus: 1200,
+    baseCredits: 2000,
+    savings: 60, // 60% bonus
+    popular: false,
+    bestValue: false,
+    pricePerCredit: 4.69,
   },
 ];
 
