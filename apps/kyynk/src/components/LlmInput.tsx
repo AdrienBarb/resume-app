@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/Input';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Loader2, Send, MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/hooks/users/useUser';
+import { useAuthModal } from '@/hooks/auth/openAuthModal';
 
 interface LlmInputProps {
   className?: string;
@@ -17,12 +19,37 @@ const LlmInput: React.FC<LlmInputProps> = ({ className = '' }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const { user } = useUser();
+  const { openSignIn } = useAuthModal();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    router.push('/payment');
-    return;
+    if (!user) {
+      openSignIn();
+      return;
+    }
+
+    if (user?.creditBalance === 0) {
+      router.push('/payment');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/llm', {
+        method: 'POST',
+        body: JSON.stringify({ message }),
+      });
+
+      const data = await response.json();
+      setResponse(data.response);
+    } catch (error) {
+      setError('Failed to get response');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

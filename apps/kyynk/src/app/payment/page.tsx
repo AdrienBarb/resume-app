@@ -16,7 +16,6 @@ import {
 import { toast } from 'react-hot-toast';
 import { ArrowLeft } from 'lucide-react';
 
-// Removed Carousel imports - using grid layout instead
 import { creditPackages, getPackById } from '@/constants/creditPackages';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/tailwind/cn';
@@ -24,6 +23,7 @@ import { useTranslations } from 'next-intl';
 import LanguageSwitcher from '@/components/layout/LanguageSwitcher';
 import { getStripePromise } from '@/lib/stripe/public';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/hooks/users/useUser';
 
 interface ErrorScreenProps {
   message: string;
@@ -31,13 +31,15 @@ interface ErrorScreenProps {
 }
 
 function ErrorScreen({ message, onRetry }: ErrorScreenProps) {
+  const t = useTranslations();
+
   return (
     <div className="max-w-md mx-auto text-center space-y-4">
       <div className="text-6xl">😞</div>
-      <h2 className="text-xl font-semibold">Oops! Something went wrong</h2>
+      <h2 className="text-xl font-semibold">{t('paymentErrorTitle')}</h2>
       <p className="text-gray-600">{message}</p>
       <Button onClick={onRetry} className="w-full">
-        Try Again
+        {t('paymentErrorRetry')}
       </Button>
     </div>
   );
@@ -52,6 +54,7 @@ function CheckoutForm({ amountLabel, onSuccess, onError }: CheckoutFormProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
+  const t = useTranslations();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +65,7 @@ function CheckoutForm({ amountLabel, onSuccess, onError }: CheckoutFormProps) {
     const { error: submitError } = await elements.submit();
     if (submitError) {
       setLoading(false);
-      const errorMessage = submitError.message ?? 'Payment form incomplete.';
+      const errorMessage = submitError.message ?? t('paymentFormIncomplete');
       toast.error(errorMessage);
       onError?.(errorMessage);
       return;
@@ -76,13 +79,13 @@ function CheckoutForm({ amountLabel, onSuccess, onError }: CheckoutFormProps) {
     setLoading(false);
 
     if (error) {
-      const errorMessage = error.message ?? 'Payment failed.';
+      const errorMessage = error.message ?? t('paymentFailed');
       toast.error(errorMessage);
       onError?.(errorMessage);
       return;
     }
 
-    toast.success('Payment succeeded! Your credits will be added shortly.');
+    toast.success(t('paymentSuccess'));
     onSuccess?.();
   };
 
@@ -95,7 +98,7 @@ function CheckoutForm({ amountLabel, onSuccess, onError }: CheckoutFormProps) {
         isLoading={loading}
         className="w-full"
       >
-        Pay {amountLabel}
+        {t('paymentPay')} {amountLabel}
       </Button>
     </form>
   );
@@ -133,63 +136,61 @@ function PackageSelection({
             onClick={() => onSelectPackage(pkg.id)}
           >
             {pkg.popular && (
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
                 <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                  MOST POPULAR
+                  {t('paymentMostPopular')}
                 </span>
               </div>
             )}
             {pkg.bestValue && (
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
                 <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                  BEST VALUE
+                  {t('paymentBestValue')}
                 </span>
               </div>
             )}
 
-            {/* Price */}
             <div className="text-center mb-4">
               <div className="text-3xl font-bold text-black">
                 ${(pkg.price / 100).toFixed(2)}
               </div>
               <div className="text-sm text-gray-500">
-                ${pkg.pricePerCredit.toFixed(2)} per credit
+                ${(pkg.price / 100 / pkg.credits).toFixed(2)}{' '}
+                {t('paymentPerCredit')}
               </div>
             </div>
 
-            {/* Credits with bonus highlight */}
             <div className="text-center mb-4">
               <div className="text-2xl font-bold">{pkg.credits}</div>
-              <div className="text-sm text-gray-600">Total Credits</div>
+              <div className="text-sm text-gray-600">
+                {t('paymentTotalCredits')}
+              </div>
               {pkg.bonus > 0 && (
                 <div className="mt-1">
                   <span className="text-sm text-gray-600">
                     {pkg.baseCredits} +
                   </span>
                   <span className="text-sm font-bold text-green-600 ml-1">
-                    {pkg.bonus} bonus
+                    {pkg.bonus} {t('paymentBonus')}
                   </span>
                 </div>
               )}
             </div>
 
-            {/* Savings Badge */}
             {pkg.savings > 0 && (
               <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-bold mb-2">
-                Save {pkg.savings}%
+                {t('paymentSave')} {pkg.savings}%
               </div>
             )}
 
-            {/* Value Proposition */}
             <div className="text-center text-xs text-gray-500 mb-4">
-              {pkg.id === 1 && 'Perfect to get started'}
-              {pkg.id === 2 && 'Great for regular users'}
-              {pkg.id === 3 && 'Ideal for active members'}
-              {pkg.id === 4 && 'Maximum value for power users'}
-              {pkg.id === 5 && 'Ultimate experience package'}
+              {pkg.id === 1 && t('paymentValueProp1')}
+              {pkg.id === 2 && t('paymentValueProp2')}
+              {pkg.id === 3 && t('paymentValueProp3')}
+              {pkg.id === 4 && t('paymentValueProp4')}
+              {pkg.id === 5 && t('paymentValueProp5')}
             </div>
 
-            {/* Selection indicator */}
             {selectedPackageId === pkg.id && (
               <div className="absolute top-4 right-4">
                 <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
@@ -211,12 +212,8 @@ function PackageSelection({
         ))}
       </div>
 
-      {/* Social proof and urgency */}
       <div className="text-center mb-6">
-        <p className="text-sm text-gray-600">
-          ⭐ Join over 10,000+ satisfied users • 💳 Secure payment • 🚀 Instant
-          credit delivery
-        </p>
+        <p className="text-sm text-gray-600">{t('paymentSocialProof')}</p>
       </div>
 
       <div className="flex justify-center">
@@ -227,10 +224,11 @@ function PackageSelection({
           onClick={onBuy}
         >
           {selectedPackageId
-            ? `Get ${
-                creditPackages.find((p) => p.id === selectedPackageId)?.credits
-              } Credits`
-            : 'Select a Package'}
+            ? t('paymentGetCredits', {
+                credits: creditPackages.find((p) => p.id === selectedPackageId)
+                  ?.credits,
+              })
+            : t('paymentSelectPackage')}
         </Button>
       </div>
     </>
@@ -244,6 +242,7 @@ const PaymentPage = () => {
     clientSecret: parseAsString,
     selectedPackage: parseAsInteger,
   });
+  const { user } = useUser();
   const [userId, setUserId] = useQueryState('userId');
   const [redirectUrl, setRedirectUrl] = useQueryState('redirectUrl');
 
@@ -271,12 +270,12 @@ const PaymentPage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           packageId: clientSecret.selectedPackage,
-          userId: userId,
+          userId: userId || user?.id,
         }),
       });
       const json = await res.json();
       if (!res.ok) {
-        throw new Error(json?.error || 'Failed to create payment intent');
+        throw new Error(json?.error || t('paymentIntentFailed'));
       }
       setClientSecret({
         selectedPackage: clientSecret.selectedPackage,
