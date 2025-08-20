@@ -19,7 +19,7 @@ import { ArrowLeft } from 'lucide-react';
 import { creditPackages, getPackById } from '@/constants/creditPackages';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/tailwind/cn';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import LanguageSwitcher from '@/components/layout/LanguageSwitcher';
 import { getStripePromise } from '@/lib/stripe/public';
 import { useRouter } from 'next/navigation';
@@ -237,6 +237,7 @@ function PackageSelection({
 
 const PaymentPage = () => {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const [clientSecret, setClientSecret] = useQueryStates({
     clientSecret: parseAsString,
@@ -380,6 +381,7 @@ const PaymentPage = () => {
               options={{
                 clientSecret: clientSecret.clientSecret,
                 appearance: { labels: 'floating' },
+                locale: locale as any,
               }}
             >
               <CheckoutForm
