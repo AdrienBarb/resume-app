@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
         packageName: pack.name,
         credits: String(pack.credits),
         bonus: String(pack.bonus),
-        discount: discount ? String(discount) : undefined,
+        discount: discount ? String(discount) : null,
         originalPrice: String(pack.price),
       },
     },
