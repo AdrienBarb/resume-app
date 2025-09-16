@@ -550,6 +550,7 @@
   "paymentGetCredits": "Get {credits} Credits",
   "paymentSelectPackage": "Select a Package",
   "paymentIntentFailed": "Failed to create payment intent",
+  "paymentFirstTimeDiscount": "First-Time Discount",
   "revenueDashboardIncoming": "Incoming revenue",
   "revenueDashboardIncomingDesc": "The incoming revenue is from your sales that are currently being validated. It takes 7 days to validate, so this revenue will be available in 7 days.",
   "revenueDashboardAvailable": "Available revenue",

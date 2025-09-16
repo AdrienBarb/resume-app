@@ -549,6 +549,7 @@
   "paymentGetCredits": "Obtenir {credits} Crédits",
   "paymentSelectPackage": "Sélectionner un Pack",
   "paymentIntentFailed": "Échec de la création de l'intention de paiement",
+  "paymentFirstTimeDiscount": "Remise Première Fois",
   "revenueDashboardIncoming": "Revenus en attente",
   "revenueDashboardIncomingDesc": "Les revenus en attente proviennent de vos ventes en cours de validation. Il faut 7 jours pour valider, ce revenu sera donc disponible dans 7 jours.",
   "revenueDashboardAvailable": "Revenus disponibles",
