@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db/client';
 import Stripe from 'stripe';
 import { TransactionStatus } from '@prisma/client';
 import { stripe } from '@/lib/stripe/client';
+import { createTrackDeskConversion } from '@/services/trackdesk/createConversion';
 
 export const runtime = 'nodejs'; // raw body access
 
@@ -53,6 +54,27 @@ export async function POST(req: NextRequest) {
             },
           }),
         ]);
+
+        const user = await prisma.user.findUnique({
+          where: { id: existing.userId },
+          select: { trackdeskCid: true },
+        });
+
+        if (user?.trackdeskCid) {
+          try {
+            const trackdeskData = user.trackdeskCid as any;
+            const cid = trackdeskData?.cid;
+
+            if (cid) {
+              await createTrackDeskConversion({
+                cid,
+                amountCents: existing.amountCents,
+              });
+            }
+          } catch (error) {
+            console.error('TrackDesk conversion error:', error);
+          }
+        }
 
         break;
       }
