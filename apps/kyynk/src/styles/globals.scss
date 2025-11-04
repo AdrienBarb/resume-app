@@ -7,22 +7,18 @@ body {
   margin: 0;
   font-family: var(--font-karla);
   font-size: 16px;
-  background-color: $background;
-  color: $custom-black;
+  @apply bg-background text-background;
 
   @media (prefers-color-scheme: dark) {
-    background-color: $background !important;
-    color: $custom-black !important;
+    @apply bg-background text-background;
   }
 }
 
 .main {
-  background-color: $background;
-  color: $custom-black;
+  @apply bg-background text-background;
 
   @media (prefers-color-scheme: dark) {
-    background-color: $background;
-    color: $custom-black;
+    @apply bg-background text-background;
   }
 }
 

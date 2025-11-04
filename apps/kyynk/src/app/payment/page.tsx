@@ -96,7 +96,7 @@ function CheckoutForm({ amountLabel, onSuccess, onError }: CheckoutFormProps) {
         type="submit"
         disabled={!stripe || !elements || loading}
         isLoading={loading}
-        className="w-full"
+        className="w-full text-custom-black"
       >
         {t('paymentPay')} {amountLabel}
       </Button>
@@ -135,6 +135,9 @@ function PackageSelection({
     };
   };
 
+  const firstPackage = creditPackages[0];
+  const discountedPkg = getDiscountedPackage(firstPackage);
+
   return (
     <>
       {discount && (
@@ -146,117 +149,214 @@ function PackageSelection({
           </div>
         </div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 max-w-7xl mx-auto mb-8">
-        {creditPackages.map((pkg) => {
-          const discountedPkg = getDiscountedPackage(pkg);
-          return (
-            <div
-              key={pkg.id}
-              className={cn(
-                'relative p-6 border-2 rounded-xl flex flex-col items-center cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105',
-                selectedPackageId === pkg.id
-                  ? 'border-primary bg-primary/5 shadow-lg'
-                  : 'border-gray-200 hover:border-primary/50',
-                pkg.popular && 'border-orange-400 bg-orange-50',
-                pkg.bestValue && 'border-green-400 bg-green-50',
-              )}
-              onClick={() => onSelectPackage(pkg.id)}
-            >
-              {pkg.popular && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                  <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                    {t('paymentMostPopular')}
-                  </span>
-                </div>
-              )}
-              {pkg.bestValue && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                  <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                    {t('paymentBestValue')}
-                  </span>
-                </div>
-              )}
-
-              <div className="text-center mb-4">
-                {discount && (
-                  <div className="text-lg line-through text-gray-400 mb-1">
-                    ${(pkg.price / 100).toFixed(2)}
+      <div className="flex justify-center mb-8">
+        {/* Multi-package grid layout - commented for future use
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 max-w-7xl mx-auto mb-8">
+          {creditPackages.map((pkg) => {
+            const discountedPkg = getDiscountedPackage(pkg);
+            return (
+              <div
+                key={pkg.id}
+                className={cn(
+                  'relative p-6 border-2 rounded-xl flex flex-col items-center cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105',
+                  selectedPackageId === pkg.id
+                    ? 'border-primary bg-primary/5 shadow-lg'
+                    : 'border-gray-200 hover:border-primary/50',
+                  pkg.popular && 'border-orange-400 bg-orange-50',
+                  pkg.bestValue && 'border-green-400 bg-green-50',
+                )}
+                onClick={() => onSelectPackage(pkg.id)}
+              >
+                {pkg.popular && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                      {t('paymentMostPopular')}
+                    </span>
                   </div>
                 )}
-                <div className="text-3xl font-bold text-black">
-                  ${(discountedPkg.price / 100).toFixed(2)}
-                  {discount && (
-                    <span className="ml-2 text-sm bg-red-500 text-white px-2 py-1 rounded-full">
-                      -{discount}%
+                {pkg.bestValue && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                      {t('paymentBestValue')}
                     </span>
+                  </div>
+                )}
+
+                <div className="text-center mb-4">
+                  {discount && (
+                    <div className="text-lg line-through text-gray-400 mb-1">
+                      ${(pkg.price / 100).toFixed(2)}
+                    </div>
+                  )}
+                  <div className="text-3xl font-bold text-black">
+                    ${(discountedPkg.price / 100).toFixed(2)}
+                    {discount && (
+                      <span className="ml-2 text-sm bg-red-500 text-white px-2 py-1 rounded-full">
+                        -{discount}%
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    ${(discountedPkg.price / 100 / pkg.credits).toFixed(2)}{' '}
+                    {t('paymentPerCredit')}
+                  </div>
+                </div>
+
+                <div className="text-center mb-4">
+                  <div className="text-2xl font-bold">{pkg.credits}</div>
+                  <div className="text-sm text-gray-600">
+                    {t('paymentTotalCredits')}
+                  </div>
+                  {pkg.bonus > 0 && (
+                    <div className="mt-1">
+                      <span className="text-sm text-gray-600">
+                        {pkg.baseCredits} +
+                      </span>
+                      <span className="text-sm font-bold text-green-600 ml-1">
+                        {pkg.bonus} {t('paymentBonus')}
+                      </span>
+                    </div>
                   )}
                 </div>
-                <div className="text-sm text-gray-500">
-                  ${(discountedPkg.price / 100 / pkg.credits).toFixed(2)}{' '}
-                  {t('paymentPerCredit')}
-                </div>
-              </div>
 
-              <div className="text-center mb-4">
-                <div className="text-2xl font-bold">{pkg.credits}</div>
-                <div className="text-sm text-gray-600">
-                  {t('paymentTotalCredits')}
+                {pkg.savings > 0 && (
+                  <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-bold mb-2">
+                    {t('paymentSave')} {pkg.savings}%
+                  </div>
+                )}
+
+                <div className="text-center text-xs text-gray-500 mb-4">
+                  {pkg.id === 1 && t('paymentValueProp1')}
+                  {pkg.id === 2 && t('paymentValueProp2')}
+                  {pkg.id === 3 && t('paymentValueProp3')}
+                  {pkg.id === 4 && t('paymentValueProp4')}
+                  {pkg.id === 5 && t('paymentValueProp5')}
                 </div>
-                {pkg.bonus > 0 && (
-                  <div className="mt-1">
-                    <span className="text-sm text-gray-600">
-                      {pkg.baseCredits} +
-                    </span>
-                    <span className="text-sm font-bold text-green-600 ml-1">
-                      {pkg.bonus} {t('paymentBonus')}
-                    </span>
+
+                {selectedPackageId === pkg.id && (
+                  <div className="absolute top-4 right-4">
+                    <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                      <svg
+                        className="w-4 h-4 text-white"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
                   </div>
                 )}
               </div>
+            );
+          })}
+        </div>
+        */}
+        <div
+          className={cn(
+            'relative p-6 border-2 rounded-xl flex flex-col items-center cursor-pointer transition-all duration-300 hover:shadow-xl max-w-sm w-full',
+            selectedPackageId === firstPackage.id
+              ? 'border-primary bg-primary/5 shadow-lg'
+              : 'border-gray-200 hover:border-primary/50',
+            firstPackage.popular && 'border-orange-400 bg-orange-50',
+            firstPackage.bestValue && 'border-green-400 bg-green-50',
+          )}
+          onClick={() => onSelectPackage(firstPackage.id)}
+        >
+          {firstPackage.popular && (
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+              <span className="bg-orange-500 text-primary px-3 py-1 rounded-full text-xs font-bold">
+                {t('paymentMostPopular')}
+              </span>
+            </div>
+          )}
+          {firstPackage.bestValue && (
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+              <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                {t('paymentBestValue')}
+              </span>
+            </div>
+          )}
 
-              {pkg.savings > 0 && (
-                <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-bold mb-2">
-                  {t('paymentSave')} {pkg.savings}%
-                </div>
-              )}
-
-              <div className="text-center text-xs text-gray-500 mb-4">
-                {pkg.id === 1 && t('paymentValueProp1')}
-                {pkg.id === 2 && t('paymentValueProp2')}
-                {pkg.id === 3 && t('paymentValueProp3')}
-                {pkg.id === 4 && t('paymentValueProp4')}
-                {pkg.id === 5 && t('paymentValueProp5')}
+          <div className="text-center mb-4">
+            {discount && (
+              <div className="text-lg line-through text-gray-400 mb-1">
+                ${(firstPackage.price / 100).toFixed(2)}
               </div>
-
-              {selectedPackageId === pkg.id && (
-                <div className="absolute top-4 right-4">
-                  <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                    <svg
-                      className="w-4 h-4 text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                </div>
+            )}
+            <div className="text-3xl font-bold text-primary">
+              ${(discountedPkg.price / 100).toFixed(2)}
+              {discount && (
+                <span className="ml-2 text-sm bg-red-500 text-white px-2 py-1 rounded-full">
+                  -{discount}%
+                </span>
               )}
             </div>
-          );
-        })}
-      </div>
+            <div className="text-sm text-primary">
+              ${(discountedPkg.price / 100 / firstPackage.credits).toFixed(2)}{' '}
+              {t('paymentPerCredit')}
+            </div>
+          </div>
 
-      <div className="text-center mb-6">
-        <p className="text-sm text-gray-600">{t('paymentSocialProof')}</p>
+          <div className="text-center mb-4">
+            <div className="text-2xl font-bold text-primary">
+              {firstPackage.credits}
+            </div>
+            <div className="text-sm text-primary">
+              {t('paymentTotalCredits')}
+            </div>
+            {firstPackage.bonus > 0 && (
+              <div className="mt-1">
+                <span className="text-sm text-primary">
+                  {firstPackage.baseCredits} +
+                </span>
+                <span className="text-sm font-bold text-primary ml-1">
+                  {firstPackage.bonus} {t('paymentBonus')}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {firstPackage.savings > 0 && (
+            <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-bold mb-2">
+              {t('paymentSave')} {firstPackage.savings}%
+            </div>
+          )}
+
+          <div className="text-center text-xs text-primary mb-4">
+            {firstPackage.id === 1 && t('paymentValueProp1')}
+            {firstPackage.id === 2 && t('paymentValueProp2')}
+            {firstPackage.id === 3 && t('paymentValueProp3')}
+            {firstPackage.id === 4 && t('paymentValueProp4')}
+            {firstPackage.id === 5 && t('paymentValueProp5')}
+          </div>
+
+          {selectedPackageId === firstPackage.id && (
+            <div className="absolute top-4 right-4">
+              <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                <svg
+                  className="w-4 h-4 text-custom-black"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex justify-center">
         <Button
-          className="w-full max-w-md py-4 text-lg font-semibold"
+          className="w-full max-w-md py-4 text-lg font-semibold text-custom-black"
           disabled={isCreating || selectedPackageId === null}
           isLoading={isCreating}
           onClick={onBuy}
@@ -290,6 +390,14 @@ const PaymentPage = () => {
 
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Auto-select first package if none is selected
+  useEffect(() => {
+    if (!clientSecret.selectedPackage && !clientSecret.clientSecret) {
+      setClientSecret({ selectedPackage: creditPackages[0].id });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const selectedPack = clientSecret.selectedPackage
     ? getPackById(clientSecret.selectedPackage)
@@ -397,7 +505,7 @@ const PaymentPage = () => {
             onClick={handleBack}
             className="mr-2"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4" color="#fff0eb" />
           </Button>
         </div>
         <div className="flex items-center gap-2">
@@ -407,8 +515,10 @@ const PaymentPage = () => {
 
       <main className="mt-[68px] container mx-auto p-6">
         <div className="flex flex-col items-center mb-8">
-          <h1 className="text-2xl font-bold mb-2">{headerTitle}</h1>
-          <p className="text-gray-600">{headerSubtitle}</p>
+          <h1 className="text-2xl font-bold mb-2 text-primary">
+            {headerTitle}
+          </h1>
+          {/* <p className="text-gray-600">{headerSubtitle}</p> */}
         </div>
 
         {!isOnPaymentForm && (
